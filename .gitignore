@@ -1,0 +1,20 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
+
+# Testfiler (om du använder pytest etc.)
+*.log
+*.coverage
+htmlcov/
+.cache/
+pytest_cache/
+
+# Miljövariabler (om du använder .env-filer i framtiden)
+.env
