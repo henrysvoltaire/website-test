@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>To-Do App</title>
+</head>
+<body>
+    <!-- History panel -->
+    <div style="position: absolute; 
+                top: 1rem; 
+                right: 1rem; 
+                width: 250px;
+                background-color: lightgray;
+                border: 1px solid #ccc;
+                padding: 1rem;
+                border-radius: 8px;
+                font-size: 0.9rem;
+                box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+        <strong>History</strong>
+        <ul style="list-style-type: none; padding-left: 0;">
+            {% for message in history|reverse %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    {% if data_erased %}
+        <p style="color: red; font-weight: bold;">All data has been erased – The To-Do app is now reset.</p>
+    {% endif %}
+
+
+    <h1 style="margin-bottom: 1rem;">To-Do List</h1>
+
+    <!-- Add task form -->
+    <form action="/add" method="post">
+        <label for="task">New Task:</label>
+        <input type="text" id="task" name="task" placeholder="Enter a task" required>
+        <button type="submit">Add Task</button>
+    </form>
+
+    <!-- Task list -->
+    <ul>
+        {% if tasks %}
+            {% for task in tasks %}
+                <li>
+                    <!-- Toggle checkbox form -->
+                    <form action="/toggle" method="post" style="display:inline;">
+                        <input type="hidden" name="task_id" value="{{ task['id'] }}">
+                        <input type="checkbox" onchange="this.form.submit()" {% if task['done'] %}checked{% endif %}>
+                    </form>
+
+                    <!-- Display task text -->
+                    <span style="{% if task['done'] %}text-decoration: line-through;{% endif %}">
+                        {{ task["text"] }} <small>({{ task["timestamp"] }})</small>
+                    </span>
+
+                    <!-- Delete task form -->
+                    <form action="/delete" method="post" style="display:inline">
+                        <input type="hidden" name="task_id" value="{{ task['id'] }}">
+                        <button type="submit">Delete</button>
+                    </form>
+                </li>
+            {% endfor %}
+        {% elif archive %}
+            <p>You’ve completed all your tasks – great job!</p>
+        {% else %}
+            <p>Welcome! Start by adding tasks to keep track on.</p>
+        {% endif %}
+    </ul>
+
+    <!-- Clear checked tasks -->
+    {% if tasks|selectattr("done")|list %}
+    <form action="/clear" method="post">
+        <button type="submit">Clear Completed</button>
+    </form>
+    {% endif %}
+
+    <!-- Clear archive and feedback -->
+    {% if latest_archived %}
+        <p>{{ latest_archived }} task{{ "s" if latest_archived > 1 else "" }} archived</p>
+    {% endif %}
+
+    <!-- Reset feedback-->
+    {% if archive_reset %}
+        <p style="color: green;">Archive cleared.</p>
+    {% endif %}
+    
+    {% if archive %}
+        <h2>Archived Tasks</h2>
+        <ul>
+            {% for task in archive %}
+                <li>
+                    {{ task["text"] }} <small>({{ task["timestamp"] }})</small>
+                </li>
+            {% endfor %}
+        </ul>
+        
+        <!-- Reset archive -->
+        <form action="/reset" method="post">
+            <button type="submit">Reset Archive</button>
+        </form>
+    {% endif %}
+
+    <!-- Hard reset all data button -->
+    <div style="text-align: center; margin-top: 40px;">
+        <form action="/erase_data" method="post" onsubmit="return confirm('Are you sure you want to ERASE ALL DATA? This cannot be undone.')">
+            <button type="submit" style="
+                background-color: red;
+                color: white;
+                padding: 10px 20px;
+                border: none;
+                border-radius: 5px;
+                font-weight: bold;
+                cursor: pointer;">
+                Reset All Data
+            </button>
+        </form>
+    </div>
+</body>
+</html>
