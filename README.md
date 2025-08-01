@@ -1,4 +1,4 @@
-# Website Test – Flask To-Do App
+# Flask To-Do App
 A lightweight and fully functional to-do app built with Flask to learn web development in Python. This project demonstrates dynamic routing, form handling, and persistent local storage using JSON.
 
 ## Features
